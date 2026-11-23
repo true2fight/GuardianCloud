@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Безпека Google Диска: Вартовий Хмари</title>
+    <!-- Підключення Tailwind CSS для адаптивної верстки -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Підключення сучасних шрифтів із підтримкою кирилиці -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Кольорова палітра хмарного сховища та кіберзахисту */
+        :root {
+            --bg-deep: #060d1f;
+            --panel-bg: rgba(15, 23, 42, 0.86);
+            --drive-blue: #3b82f6;
+            --drive-cyan: #06b6d4;
+            --drive-emerald: #10b981;
+            --drive-amber: #f59e0b;
+            --drive-rose: #f43f5e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(59, 130, 246, 0.14) 0%, transparent 42%),
+                radial-gradient(circle at 88% 82%, rgba(16, 185, 129, 0.12) 0%, transparent 42%),
+                linear-gradient(180deg, #060d1f 0%, #0b152e 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .font-mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Фонова хмарна сітка */
+        .cloud-grid {
+            background-size: 38px 38px;
+            background-image:
+                linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+        }
+
+        /* Скляні картки інтерфейсу */
+        .glass-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(56, 189, 248, 0.22);
+            box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.65);
+        }
+
+        /* Анімація захисних контурів хмарного ядра */
+        .shield-ring {
+            opacity: 0.15;
+            transform-origin: center;
+            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .shield-ring.active {
+            opacity: 1;
+            filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.65));
+        }
+
+        @keyframes floatCloud {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .cloud-float {
+            animation: floatCloud 4.2s ease-in-out infinite;
+        }
+
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .orbit-spin {
+            transform-origin: 140px 140px;
+            animation: spinSlow 28s linear infinite;
+        }
+
+        /* Ігрові кнопки */
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(6, 182, 212, 0.52);
+        }
+        .btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(16, 185, 129, 0.55);
+        }
+        .btn-success:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.6);
+        }
+
+        /* Пульсація витоку конфіденційних даних */
+        @keyframes leakPulse {
+            0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.65); }
+            70% { box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+        }
+        .leak-alert {
+            animation: leakPulse 1.3s infinite;
+            border-color: #f43f5e !important;
+            background-color: rgba(244, 63, 94, 0.14) !important;
+        }
+
+        /* Плавна поява етапів */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stage-animate {
+            animation: slideUpFade 0.38s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="cloud-grid flex flex-col justify-between">
+
+    <!-- Верхня панель навігації -->
+    <header class="w-full border-b border-sky-500/20 bg-slate-950/85 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <!-- Логотип хмарного щита у кольорах Google Drive -->
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 11v4m0 0l-2-2m2 2l2-2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white leading-tight">
+                        Безпека Google Диска: <span class="text-sky-400">Вартовий Хмари</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Тренажер із налаштування приватності файлів і папок</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Лічильник досвіду -->
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-500/30 flex items-center gap-2">
+                    <span class="text-xs text-slate-400 hidden sm:inline">Бали безпеки:</span>
+                    <span id="scoreDisplay" class="font-mono-code font-bold text-amber-400 text-sm">0 XP</span>
+                </div>
+
+                <!-- Кнопка відкриття Довідника -->
+                <button id="openGuideBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs sm:text-sm font-semibold text-sky-300 flex items-center gap-1.5 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span>Пам'ятка Диска</span>
+                </button>
+
+                <!-- Перемикач звуку -->
+                <button id="toggleSoundBtn" title="Увімкнути/вимкнути звук" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 transition">
+                    <svg id="soundOnIcon" class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                    </svg>
+                    <svg id="soundOffIcon" class="w-5 h-5 text-slate-500 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Головна робоча область гри -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- ЛІВА ПАНЕЛЬ: Візуалізатор захищеного Google Диска (5 колонок) -->
+        <section class="lg:col-span-5 glass-card rounded-2xl p-5 flex flex-col items-center relative overflow-hidden">
+            <div class="w-full flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+                    Статус приватності Диска
+                </span>
+                <span id="privacyPercentText" class="font-mono-code text-sm font-bold text-rose-400">0% Приватності</span>
+            </div>
+
+            <!-- Шкала приватності -->
+            <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700 mb-4">
+                <div id="privacyProgressBar" class="h-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400 transition-all duration-700" style="width: 0%"></div>
+            </div>
+
+            <!-- Інтерактивна SVG-схема хмарного сховища -->
+            <div class="relative w-full max-w-[285px] aspect-square flex items-center justify-center my-1">
+                <svg viewBox="0 0 280 280" class="w-full h-full cloud-float" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="driveCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#3b82f6"/>
+                            <stop offset="50%" stop-color="#06b6d4"/>
+                            <stop offset="100%" stop-color="#10b981"/>
+                        </linearGradient>
+                        <linearGradient id="shieldAuraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="rgba(16, 185, 129, 0.35)"/>
+                            <stop offset="100%" stop-color="rgba(59, 130, 246, 0.15)"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Зовнішня орбіта (Модуль 5: Аудит Хмари) -->
+                    <g id="ring-5" class="shield-ring">
+                        <circle cx="140" cy="140" r="126" fill="url(#shieldAuraGrad)" stroke="#10b981" stroke-width="2" stroke-dasharray="12 6"/>
+                        <circle cx="140" cy="14" r="6" fill="#34d399"/>
+                        <circle cx="140" cy="266" r="6" fill="#34d399"/>
+                    </g>
+
+                    <!-- Контур 4: Заборона копіювання та завантаження -->
+                    <g id="ring-4" class="shield-ring">
+                        <circle cx="140" cy="140" r="106" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+                        <rect x="234" y="130" width="20" height="20" rx="5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                        <rect x="26" y="130" width="20" height="20" rx="5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                    </g>
+
+                    <!-- Контур 3: Захист папок (Ізоляція від витоків) -->
+                    <g id="ring-3" class="shield-ring">
+                        <circle cx="140" cy="140" r="88" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 4" class="orbit-spin"/>
+                    </g>
+
+                    <!-- Контур 2: Контроль ролей (Читач / Коментатор / Редактор) -->
+                    <g id="ring-2" class="shield-ring">
+                        <polygon points="140,62 208,101 208,179 140,218 72,179 72,101" fill="rgba(59, 130, 246, 0.1)" stroke="#60a5fa" stroke-width="2.5"/>
+                    </g>
+
+                    <!-- Контур 1: Режим «Обмежено» -->
+                    <g id="ring-1" class="shield-ring">
+                        <circle cx="140" cy="140" r="62" fill="rgba(16, 185, 129, 0.14)" stroke="#34d399" stroke-width="3"/>
+                    </g>
+
+                    <!-- Центральна хмара Google Диска -->
+                    <g id="cloud-core">
+                        <path d="M96 164 H184 A24 24 0 0 0 188 116 A34 34 0 0 0 124 102 A28 28 0 0 0 96 164 Z"
+                              fill="url(#driveCoreGrad)" stroke="#bae6fd" stroke-width="2.5"/>
+                        <!-- Символ трикутника Google Drive всередині хмари -->
+                        <polygon points="140,116 158,148 122,148" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+                        <!-- Індикатор замка внизу хмари -->
+                        <rect x="131" y="152" width="18" height="14" rx="3" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                        <circle cx="140" cy="159" r="2" fill="#34d399"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- 5 індикаторів модулів захисту -->
+            <div class="w-full grid grid-cols-5 gap-2 mt-2">
+                <div id="mod-1" class="p-2 rounded-xl bg-slate-900/90 border border-slate-700 text-center transition">
+                    <div class="text-lg">🔒</div>
+                    <div class="text-[10px] font-semibold text-slate-400 leading-tight mt-0.5">Обмежено</div>
+                </div>
+                <div id="mod-2" class="p-2 rounded-xl bg-slate-900/90 border border-slate-700 text-center transition">
+                    <div class="text-lg">👁️</div>
+                    <div class="text-[10px] font-semibold text-slate-400 leading-tight mt-0.5">Ролі</div>
+                </div>
+                <div id="mod-3" class="p-2 rounded-xl bg-slate-900/90 border border-slate-700 text-center transition">
+                    <div class="text-lg">📁</div>
+                    <div class="text-[10px] font-semibold text-slate-400 leading-tight mt-0.5">Папки</div>
+                </div>
+                <div id="mod-4" class="p-2 rounded-xl bg-slate-900/90 border border-slate-700 text-center transition">
+                    <div class="text-lg">🚫</div>
+                    <div class="text-[10px] font-semibold text-slate-400 leading-tight mt-0.5">Копії</div>
+                </div>
+                <div id="mod-5" class="p-2 rounded-xl bg-slate-900/90 border border-slate-700 text-center transition">
+                    <div class="text-lg">🛡️</div>
+                    <div class="text-[10px] font-semibold text-slate-400 leading-tight mt-0.5">Аудит</div>
+                </div>
+            </div>
+
+            <!-- Інформаційна картка стану -->
+            <div id="vaultStatusCard" class="w-full mt-4 p-3.5 rounded-xl bg-slate-900/90 border border-rose-500/30 text-xs text-slate-300 leading-relaxed">
+                <strong class="text-rose-400 block mb-1">⚠️ Увага: Твій Диск зараз відкритий!</strong>
+                Коли файли мають доступ <em>«Усі, хто має посилання»</em>, будь-хто в інтернеті може переглядати, завантажувати та пересилати твої особисті дані. Пройди 5 місій, щоб налаштувати надійний захист!
+            </div>
+        </section>
+
+        <!-- ПРАВА ПАНЕЛЬ: Інтерактивний симулятор Google Диска (7 колонок) -->
+        <section class="lg:col-span-7 glass-card rounded-2xl p-5 sm:p-7 min-h-[530px] flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-4 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <span id="stageBadge" class="px-2.5 py-1 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-300 font-mono-code text-xs font-bold">
+                        МІСІЯ 0 / 5
+                    </span>
+                    <h2 id="stageTitle" class="text-lg sm:text-xl font-bold text-white">Хмарний інструктаж</h2>
+                </div>
+            </div>
+
+            <!-- Динамічний контент етапів -->
+            <div id="gameWorkspace" class="flex-grow flex flex-col justify-between stage-animate">
+                <!-- Заповнюється через JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Модальне вікно «Пам'ятка Диска» -->
+    <div id="guideModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="glass-card max-w-2xl w-full rounded-2xl p-6 max-h-[88vh] overflow-y-auto border border-sky-400/40">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+                <h3 class="text-xl font-bold text-sky-300 flex items-center gap-2">
+                    <span>☁️</span> Правила безпеки Google Диска
+                </h3>
+                <button id="closeGuideBtn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">✕</button>
+            </div>
+
+            <div class="space-y-4 text-sm text-slate-300 leading-relaxed">
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-rose-500/30">
+                    <h4 class="font-bold text-rose-400 text-base mb-1">1. Чому небезпечно вмикати «Усі, хто має посилання»?</h4>
+                    <p class="mb-2">Багато дітей обирають цей режим, бо це «швидко». Але тоді файл стає доступним <strong>будь-кому в мережі</strong>:</p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-300">
+                        <li>Посилання можуть переслати у відкриті чати або соцмережі без твого відома.</li>
+                        <li>Незнайомці можуть <strong>завантажити твої фото чи документи</strong> — і навіть якщо ти закриєш доступ пізніше, збережені копії залишаться у них назавжди.</li>
+                        <li>Зловмисники можуть використати особисту інформацію (адресу, школу, фото) для кібербулінгу, фейкових сторінок чи шахрайства.</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30">
+                    <h4 class="font-bold text-emerald-400 text-base mb-1">2. Як правильно ділитися файлами?</h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-300">
+                        <li>Залишай режим <strong class="text-emerald-300">«Обмежено» (Restricted)</strong> і додавай конкретні електронні адреси людей (вчителя, однокласників, батьків).</li>
+                        <li>Обирай мінімально необхідну роль: <strong class="text-sky-300">Читач</strong> (лише перегляд), <strong class="text-amber-300">Коментатор</strong> (поради без зміни тексту) або <strong class="text-rose-300">Редактор</strong> (лише для спільної роботи з довіреними людьми).</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-sky-500/30">
+                    <h4 class="font-bold text-sky-400 text-base mb-1">3. Пастки папок і копіювання</h4>
+                    <p>Якщо відкрити доступ до <strong>папки</strong>, усі нові файли, які ти туди покладеш, автоматично стануть відкритими! Також у налаштуваннях (іконка шестерні ⚙️) можна заборонити читачам завантажувати, друкувати та копіювати твій файл.</p>
+                </div>
+            </div>
+
+            <div class="mt-5 flex justify-end">
+                <button id="closeGuideBottomBtn" class="btn-primary px-5 py-2.5 rounded-xl font-bold text-white text-sm">
+                    Зрозуміло, повернутися до місії
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно Сертифіката -->
+    <div id="certificateModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-card max-w-3xl w-full rounded-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto border border-emerald-400/50 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 class="text-lg sm:text-xl font-bold text-emerald-300 flex items-center gap-2">
+                    <span>🏆</span> Твій Сертифікат Вартового Хмари
+                </h3>
+                <button id="closeCertModalBtn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">✕</button>
+            </div>
+
+            <div class="w-full rounded-xl overflow-hidden border border-sky-500/40 bg-slate-950 shadow-2xl">
+                <canvas id="certificateCanvas" width="1200" height="850" class="w-full h-auto block"></canvas>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <span class="text-xs text-slate-400">Іменний документ сформовано за результатами проходження тренажера</span>
+                <div class="flex flex-wrap gap-2.5 w-full sm:w-auto justify-end">
+                    <button id="downloadCertBtn" class="btn-success w-full sm:w-auto px-5 py-2.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2">
+                        <span>⬇️ Завантажити сертифікат (PNG)</span>
+                    </button>
+                    <button id="closeCertBottomBtn" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition">
+                        Закрити
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Спливаюче сповіщення (Toast) -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="px-4 py-3 rounded-xl bg-slate-900 border border-sky-400 shadow-2xl flex items-center gap-3">
+            <span id="toastIcon" class="text-xl">☁️</span>
+            <div>
+                <div id="toastTitle" class="text-sm font-bold text-white">Захист оновлено!</div>
+                <div id="toastMsg" class="text-xs text-sky-300">Рівень приватності підвищено.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Підвал -->
+    <footer class="w-full text-center py-3 text-xs text-slate-500 border-t border-slate-800/60">
+        Інтерактивний тренажер із цифрової безпеки • «Безпека Google Диска: Вартовий Хмари»
+    </footer>
+
+    <script>
+        /**
+         * ============================================================================
+         * ЗВУКОВИЙ РУШІЙ (Web Audio API)
+         * ============================================================================
+         */
+        class CloudSoundEngine {
+            constructor() {
+                this.enabled = true;
+                this.ctx = null;
+            }
+
+            init() {
+                try {
+                    if (!this.ctx) {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (AudioCtx) this.ctx = new AudioCtx();
+                    }
+                    if (this.ctx && this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                } catch (e) {
+                    // Безпечна обробка обмежень автозапуску звуку
+                }
+            }
+
+            playTone(freq, type, duration, vol = 0.14, delay = 0) {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + delay);
+
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + delay + duration);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(this.ctx.currentTime + delay);
+                    osc.stop(this.ctx.currentTime + delay + duration);
+                } catch (e) {
+                    // Ігноруємо помилки аудіоконтексту
+                }
+            }
+
+            playModuleUnlock() {
+                this.playTone(329.63, 'sine', 0.18, 0.18, 0);
+                this.playTone(440.00, 'sine', 0.22, 0.18, 0.08);
+                this.playTone(659.25, 'triangle', 0.35, 0.2, 0.16);
+            }
+
+            playClick() {
+                this.playTone(523.25, 'sine', 0.12, 0.13, 0);
+            }
+
+            playWarning() {
+                this.playTone(175, 'sawtooth', 0.22, 0.15, 0);
+                this.playTone(138, 'sawtooth', 0.28, 0.15, 0.12);
+            }
+
+            playVictory() {
+                const chord = [523.25, 659.25, 783.99, 1046.50];
+                chord.forEach((f, idx) => this.playTone(f, 'triangle', 0.36, 0.18, idx * 0.11));
+            }
+        }
+
+        const sfx = new CloudSoundEngine();
+
+        /**
+         * ============================================================================
+         * СТАН ТРЕНАЖЕРА ТА КЕРУВАННЯ ВІЗУАЛІЗАТОРОМ
+         * ============================================================================
+         */
+        const gameState = {
+            stage: 0,
+            score: 0,
+            playerName: '',
+            unlocked: [false, false, false, false, false]
+        };
+
+        let toastTimeout = null;
+
+        function showToast(title, msg, icon = '🛡️') {
+            const toast = document.getElementById('toastNotification');
+            if (!toast) return;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMsg').textContent = msg;
+            document.getElementById('toastIcon').textContent = icon;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3400);
+        }
+
+        function addScore(points) {
+            gameState.score += points;
+            const scoreEl = document.getElementById('scoreDisplay');
+            if (scoreEl) scoreEl.textContent = `${gameState.score} XP`;
+        }
+
+        function activatePrivacyModule(moduleNum, title, summary) {
+            gameState.unlocked[moduleNum - 1] = true;
+
+            const ring = document.getElementById(`ring-${moduleNum}`);
+            if (ring) ring.classList.add('active');
+
+            const modCard = document.getElementById(`mod-${moduleNum}`);
+            if (modCard) {
+                modCard.className = 'p-2 rounded-xl bg-sky-950/90 border border-emerald-400 text-center transition shadow-lg shadow-emerald-500/20';
+                const label = modCard.querySelector('div:last-child');
+                if (label) label.className = 'text-[10px] font-bold text-emerald-300 leading-tight mt-0.5';
+            }
+
+            const count = gameState.unlocked.filter(Boolean).length;
+            const percent = count * 20;
+
+            const bar = document.getElementById('privacyProgressBar');
+            const pctText = document.getElementById('privacyPercentText');
+            if (bar) bar.style.width = `${percent}%`;
+            if (pctText) {
+                pctText.textContent = `${percent}% Приватності`;
+                pctText.className = percent >= 60
+                    ? 'font-mono-code text-sm font-bold text-emerald-400'
+                    : 'font-mono-code text-sm font-bold text-amber-400';
+            }
+
+            const statusCard = document.getElementById('vaultStatusCard');
+            if (statusCard) {
+                statusCard.className = 'w-full mt-4 p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/35 text-xs text-slate-300 leading-relaxed';
+                statusCard.innerHTML = `
+                    <strong class="text-emerald-400 block mb-1">✔ Активовано: ${title} (${percent}%)</strong>
+                    ${summary}
+                `;
+            }
+
+            sfx.playModuleUnlock();
+            showToast(`Модуль активовано: ${title}`, `Рівень захисту Google Диска: ${percent}%`, '🔒');
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        /**
+         * ============================================================================
+         * РЕНДЕРИНГ УСІХ ЕТАПІВ ТРЕНАЖЕРА (0 .. 6)
+         * ============================================================================
+         */
+        function renderStage(stageNum) {
+            gameState.stage = stageNum;
+            const workspace = document.getElementById('gameWorkspace');
+            const badge = document.getElementById('stageBadge');
+            const title = document.getElementById('stageTitle');
+
+            if (!workspace || !badge || !title) return;
+
+            workspace.classList.remove('stage-animate');
+            void workspace.offsetWidth;
+            workspace.classList.add('stage-animate');
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 0: ВСТУПНИЙ БРИФІНГ
+            // ------------------------------------------------------------------------
+            if (stageNum === 0) {
+                badge.textContent = 'МІСІЯ 0 / 5';
+                title.textContent = 'Хмарний інструктаж';
+
+                workspace.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-950/70 to-slate-900 border border-sky-500/30">
+                            <h3 class="text-lg sm:text-xl font-extrabold text-white mb-2">
+                                Твій Google Диск — це особистий цифровий рюкзак 🎒☁️
+                            </h3>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                У хмарі зберігаються шкільні презентації, фотографії з друзями, відео, чернетки та важливі документи. Часто, щоб швидко переслати файл, користувачі натискають <strong class="text-rose-400">«Усі, хто має посилання»</strong> — і навіть не здогадуються, що відчиняють двері свого рюкзака для всього інтернету!
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700">
+                                <div class="text-xl mb-1">🔒 👁️</div>
+                                <div class="font-bold text-sky-300 mb-1">1. Точний доступ і ролі</div>
+                                <p class="text-slate-400">Навчишся відкривати файли лише потрібним людям і розрізняти ролі Читача, Коментатора та Редактора.</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700">
+                                <div class="text-xl mb-1">📁 ⚠️</div>
+                                <div class="font-bold text-rose-300 mb-1">2. Наслідки витоку</div>
+                                <p class="text-slate-400">Побачиш на симуляторі, як одне випадкове посилання поширюється мережею та чим це загрожує.</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700">
+                                <div class="text-xl mb-1">🛡️ 🏆</div>
+                                <div class="font-bold text-emerald-300 mb-1">3. Аудит і Сертифікат</div>
+                                <p class="text-slate-400">Проведеш перевірку реальних файлів на Диску та отримаєш іменний Сертифікат.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-2.5">
+                            <span class="text-base">💡</span>
+                            <span>Підказка: у верхньому меню завжди доступна <strong>«Пам'ятка Диска»</strong> з короткими правилами налаштування приватності.</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-800 flex justify-end">
+                        <button id="startCloudGameBtn" class="btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white text-sm sm:text-base flex items-center justify-center gap-2">
+                            <span>🚀 Розпочати захист Google Диска</span>
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById('startCloudGameBtn').addEventListener('click', () => {
+                    sfx.playClick();
+                    renderStage(1);
+                });
+            }
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 1: ВІКНО «ПОДІЛИТИСЯ» — ОБМЕЖЕНО ЧИ УСІ, ХТО МАЄ ПОСИЛАННЯ?
+            // ------------------------------------------------------------------------
+            else if (stageNum === 1) {
+                badge.textContent = 'МІСІЯ 1 / 5 • ДОСТУП';
+                title.textContent = 'Кому відкрито твій файл?';
+
+                let teacherAdded = false;
+                let accessMode = 'public'; // 'public' | 'restricted'
+
+                workspace.innerHTML = `
+                    <div class="space-y-4">
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            <strong class="text-sky-300">Ситуація:</strong> Ти підготував презентацію <span class="font-mono-code text-amber-300">Мій_Клас_та_Адреса_Школи.pptx</span> (у ній є спільні фото класу та розклад). Її потрібно надіслати <strong>лише вчительці</strong> (<span class="font-mono-code text-sky-300">olena.teacher@school.ua</span>). Налаштуй вікно доступу безпечно!
+                        </p>
+
+                        <!-- Імітація вікна налаштування доступу Google Диска -->
+                        <div class="p-4 sm:p-5 rounded-2xl bg-slate-900/95 border border-sky-500/35 space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">📊</span>
+                                    <span class="font-bold text-xs sm:text-sm text-white">Налаштування доступу: Мій_Клас_та_Адреса_Школи.pptx</span>
+                                </div>
+                                <span id="shareHeaderBadge" class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[11px] font-bold">
+                                    🌐 Відкрито всім
+                                </span>
+                            </div>
+
+                            <!-- Крок 1: Додати конкретну людину -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-slate-300 block">1. Додайте користувача за електронною адресою:</label>
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <input id="teacherEmailInput" type="text" readonly value="olena.teacher@school.ua"
+                                        class="flex-grow px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 font-mono-code text-xs text-sky-300">
+                                    <button id="addTeacherBtn" type="button" class="btn-primary px-4 py-2 rounded-xl font-bold text-white text-xs whitespace-nowrap">
+                                        ➕ Додати вчительку
+                                    </button>
+                                </div>
+                                <div id="addedPeopleList" class="text-xs text-slate-400 pt-1">
+                                    Доступ мають: <span class="text-slate-200 font-semibold">Ти (Власник)</span>
+                                </div>
+                            </div>
+
+                            <!-- Крок 2: Загальний доступ -->
+                            <div class="space-y-2 pt-2 border-t border-slate-800">
+                                <label class="text-xs font-semibold text-slate-300 block">2. Загальний доступ (хто може відкрити за посиланням):</label>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800">
+                                    <div class="flex items-center gap-2.5">
+                                        <span id="generalAccessIcon" class="text-xl">🌐</span>
+                                        <div>
+                                            <select id="generalAccessSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white focus:border-sky-400 focus:outline-none">
+                                                <option value="public" selected>Усі, хто має посилання</option>
+                                                <option value="restricted">Обмежено (лише додані користувачі)</option>
+                                            </select>
+                                            <p id="generalAccessDesc" class="text-[11px] text-rose-300 mt-1">
+                                                ⚠️ Небезпечно! Будь-хто в інтернеті, кому перешлють посилання, зможе переглядати та завантажувати ваші фото!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <span class="text-xs text-slate-400">Нагорода: <strong class="text-amber-400">+200 XP</strong> та модуль «Обмежено»</span>
+                        <button id="saveStage1Btn" disabled class="btn-success w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white text-sm">
+                            🔒 Зберегти безпечний доступ
+                        </button>
+                    </div>
+                `;
+
+                const addBtn = document.getElementById('addTeacherBtn');
+                const selectEl = document.getElementById('generalAccessSelect');
+                const saveBtn = document.getElementById('saveStage1Btn');
+
+                const checkStage1Ready = () => {
+                    saveBtn.disabled = !(teacherAdded && accessMode === 'restricted');
+                };
+
+                addBtn.addEventListener('click', () => {
+                    if (teacherAdded) return;
+                    teacherAdded = true;
+                    sfx.playClick();
+                    addBtn.textContent = '✅ Вчительку додано';
+                    addBtn.disabled = true;
+                    addBtn.classList.add('opacity-60');
+                    document.getElementById('addedPeopleList').innerHTML = `
+                        Доступ мають: <span class="text-slate-200 font-semibold">Ти (Власник)</span>, <span class="text-emerald-300 font-mono-code font-semibold">olena.teacher@school.ua</span>
+                    `;
+                    checkStage1Ready();
+                });
+
+                selectEl.addEventListener('change', () => {
+                    accessMode = selectEl.value;
+                    const icon = document.getElementById('generalAccessIcon');
+                    const desc = document.getElementById('generalAccessDesc');
+                    const badgeTop = document.getElementById('shareHeaderBadge');
+
+                    if (accessMode === 'restricted') {
+                        sfx.playClick();
+                        icon.textContent = '🔒';
+                        desc.className = 'text-[11px] text-emerald-300 mt-1';
+                        desc.textContent = '✅ Надійно! Відкрити файл зможуть лише люди, яких ви особисто додали вище.';
+                        badgeTop.className = 'px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[11px] font-bold';
+                        badgeTop.textContent = '🔒 Обмежений доступ';
+                    } else {
+                        sfx.playWarning();
+                        icon.textContent = '🌐';
+                        desc.className = 'text-[11px] text-rose-300 mt-1';
+                        desc.textContent = '⚠️ Небезпечно! Будь-хто в інтернеті, кому перешлють посилання, зможе переглядати та завантажувати ваші фото!';
+                        badgeTop.className = 'px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[11px] font-bold';
+                        badgeTop.textContent = '🌐 Відкрито всім';
+                    }
+                    checkStage1Ready();
+                });
+
+                saveBtn.addEventListener('click', () => {
+                    if (!(teacherAdded && accessMode === 'restricted')) return;
+                    addScore(200);
+                    activatePrivacyModule(
+                        1,
+                        'Режим «Обмежено»',
+                        'Замість відкритого посилання для всього інтернету ти надав точковий доступ лише потрібній людині.'
+                    );
+                    renderStage(2);
+                });
+            }
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 2: РОЛІ ДОСТУПУ — ЧИТАЧ, КОМЕНТАТОР, РЕДАКТОР
+            // ------------------------------------------------------------------------
+            else if (stageNum === 2) {
+                badge.textContent = 'МІСІЯ 2 / 5 • РОЛІ';
+                title.textContent = 'Читач, Коментатор чи Редактор?';
+
+                const scenarios = [
+                    {
+                        id: 's1',
+                        title: '1. Афіша шкільного свята для всього класу',
+                        desc: 'Ти намалював красивий плакат і хочеш, щоб однокласники просто подивилися час і місце свята, але ніхто не міг випадково видалити текст чи домалювати щось зайве.',
+                        correct: 'viewer',
+                        hint: 'Для простого перегляду без змін обирай роль «Читач».'
+                    },
+                    {
+                        id: 's2',
+                        title: '2. Чернетка твору на перевірку другу',
+                        desc: 'Ти хочеш, щоб друг прочитав твій текст і залишив підказки на полях, але не міг стерти твої абзаци.',
+                        correct: 'commenter',
+                        hint: 'Роль «Коментатор» дозволяє залишати зауваження, не змінюючи сам документ.'
+                    },
+                    {
+                        id: 's3',
+                        title: '3. Спільна презентація в парі з напарником',
+                        desc: 'Ви з однокласником разом робите проєкт з біології: кожен заповнює свої слайди в одному файлі.',
+                        correct: 'editor',
+                        hint: 'Лише для спільної роботи з довіреною людиною надається роль «Редактор».'
+                    }
+                ];
+
+                const answers = { s1: '', s2: '', s3: '' };
+
+                workspace.innerHTML = `
+                    <div class="space-y-3.5">
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-500/25 text-xs text-slate-300 leading-relaxed">
+                            <strong class="text-sky-300">Золоте правило ролей:</strong> ніколи не давай роль <strong>«Редактор»</strong> усім підряд! Сторонні «редактори» можуть знищити твою роботу, підмінити текст на образливий або вставити шкідливі посилання від твого імені.
+                        </div>
+
+                        <div class="space-y-2.5">
+                            ${scenarios.map(sc => `
+                                <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 space-y-2">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                        <div class="font-bold text-xs sm:text-sm text-white">${sc.title}</div>
+                                        <select data-sc="${sc.id}" class="role-select px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-600 text-xs font-bold text-sky-300 focus:border-sky-400 focus:outline-none">
+                                            <option value="">— Обери роль —</option>
+                                            <option value="viewer">👁️ Читач (Viewer)</option>
+                                            <option value="commenter">💬 Коментатор (Commenter)</option>
+                                            <option value="editor">✏️ Редактор (Editor)</option>
+                                        </select>
+                                    </div>
+                                    <p class="text-xs text-slate-400">${sc.desc}</p>
+                                    <div id="fb-${sc.id}" class="text-[11px] hidden"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <span class="text-xs text-slate-400">Нагорода: <strong class="text-amber-400">+200 XP</strong> та модуль «Ролі»</span>
+                        <button id="confirmRolesBtn" disabled class="btn-success w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white text-sm">
+                            👁️ Підтвердити налаштування ролей
+                        </button>
+                    </div>
+                `;
+
+                const confirmBtn = document.getElementById('confirmRolesBtn');
+
+                document.querySelectorAll('.role-select').forEach(sel => {
+                    sel.addEventListener('change', () => {
+                        const scId = sel.getAttribute('data-sc');
+                        const val = sel.value;
+                        const scenario = scenarios.find(item => item.id === scId);
+                        const fb = document.getElementById(`fb-${scId}`);
+
+                        if (!val) {
+                            answers[scId] = '';
+                            fb.classList.add('hidden');
+                            confirmBtn.disabled = true;
+                            return;
+                        }
+
+                        fb.classList.remove('hidden');
+                        if (val === scenario.correct) {
+                            sfx.playClick();
+                            answers[scId] = val;
+                            sel.className = 'role-select px-3 py-1.5 rounded-lg bg-emerald-950 border border-emerald-500 text-xs font-bold text-emerald-300';
+                            fb.className = 'text-[11px] text-emerald-300';
+                            fb.textContent = `✅ Правильно! ${scenario.hint}`;
+                        } else {
+                            sfx.playWarning();
+                            answers[scId] = '';
+                            sel.className = 'role-select px-3 py-1.5 rounded-lg bg-rose-950 border border-rose-500 text-xs font-bold text-rose-300';
+                            fb.className = 'text-[11px] text-rose-300';
+                            fb.textContent = `⚠️ Подумай ще раз! ${scenario.hint}`;
+                        }
+
+                        const allSolved = scenarios.every(s => answers[s.id] === s.correct);
+                        confirmBtn.disabled = !allSolved;
+                    });
+                });
+
+                confirmBtn.addEventListener('click', () => {
+                    addScore(200);
+                    activatePrivacyModule(
+                        2,
+                        'Контроль ролей доступу',
+                        'Ти навчився розмежовувати права Читача, Коментатора та Редактора, захищаючи документи від псування.'
+                    );
+                    renderStage(3);
+                });
+            }
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 3: СИМУЛЯТОР НАСЛІДКІВ ВІДКРИТОГО ДОСТУПУ («ЛАНЦЮГОВА РЕАКЦІЯ»)
+            // ------------------------------------------------------------------------
+            else if (stageNum === 3) {
+                badge.textContent = 'МІСІЯ 3 / 5 • НАСЛІДКИ';
+                title.textContent = 'Що відбувається, коли доступ відкрито всім?';
+
+                let simulationStarted = false;
+                let threatNeutralized = false;
+
+                workspace.innerHTML = `
+                    <div class="space-y-3.5">
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Учень завантажив на Google Диск папку <span class="font-mono-code text-amber-300">Фото_та_Документи_2026</span> (там є селфі, фото квитків з адресою та номер телефону) і ввімкнув <strong class="text-rose-400">«Усі, хто має посилання»</strong>, щоб скинути одне фото другу. Запусти симуляцію та подивись на реальні наслідки!
+                        </p>
+
+                        <!-- 4 етапи неконтрольованого поширення -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                            <div id="leak-step-1" class="p-3 rounded-xl bg-slate-900 border border-slate-700 transition-all">
+                                <div class="font-bold text-white flex items-center justify-between">
+                                    <span>1️⃣ Пересилання у чати</span>
+                                    <span id="leak-tag-1" class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Очікування</span>
+                                </div>
+                                <p class="text-slate-400 mt-1">Друг пересилає посилання у шкільний чат — тепер папку бачать десятки людей.</p>
+                            </div>
+
+                            <div id="leak-step-2" class="p-3 rounded-xl bg-slate-900 border border-slate-700 transition-all">
+                                <div class="font-bold text-white flex items-center justify-between">
+                                    <span>2️⃣ Завантаження копій</span>
+                                    <span id="leak-tag-2" class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Очікування</span>
+                                </div>
+                                <p class="text-slate-400 mt-1">Незнайомці зберігають фото собі на телефон. Навіть якщо закрити доступ пізніше — копії у них залишаться!</p>
+                            </div>
+
+                            <div id="leak-step-3" class="p-3 rounded-xl bg-slate-900 border border-slate-700 transition-all">
+                                <div class="font-bold text-white flex items-center justify-between">
+                                    <span>3️⃣ Витік особистих даних</span>
+                                    <span id="leak-tag-3" class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Очікування</span>
+                                </div>
+                                <p class="text-slate-400 mt-1">З фотографій документів або геоміток сторонні дізнаються адресу проживання, школу чи телефон.</p>
+                            </div>
+
+                            <div id="leak-step-4" class="p-3 rounded-xl bg-slate-900 border border-slate-700 transition-all">
+                                <div class="font-bold text-white flex items-center justify-between">
+                                    <span>4️⃣ Фейки та кібербулінг</span>
+                                    <span id="leak-tag-4" class="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Очікування</span>
+                                </div>
+                                <p class="text-slate-400 mt-1">Особисті фото можуть використати для створення фейкових сторінок, мемів або шантажу.</p>
+                            </div>
+                        </div>
+
+                        <!-- Панель дій -->
+                        <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
+                            <div id="leakStatusLog" class="text-xs text-slate-300">
+                                Натисни кнопку нижче, щоб побачити, як швидко втрачається контроль над відкритим посиланням.
+                            </div>
+                            <div class="flex flex-wrap gap-2.5">
+                                <button id="runLeakSimBtn" type="button" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 font-bold text-white text-xs sm:text-sm transition shadow-lg shadow-rose-600/25">
+                                    🚨 1. Відстежити наслідки відкритого посилання
+                                </button>
+                                <button id="lockFolderBtn" type="button" disabled class="btn-primary px-4 py-2.5 rounded-xl font-bold text-white text-xs sm:text-sm">
+                                    🔒 2. Закрити доступ до папки та ізолювати файли
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <span class="text-xs text-slate-400">Нагорода: <strong class="text-amber-400">+250 XP</strong> та модуль «Папки»</span>
+                        <button id="completeStage3Btn" disabled class="btn-success w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white text-sm">
+                            📁 Завершити захист папок
+                        </button>
+                    </div>
+                `;
+
+                const runBtn = document.getElementById('runLeakSimBtn');
+                const lockBtn = document.getElementById('lockFolderBtn');
+                const logEl = document.getElementById('leakStatusLog');
+
+                runBtn.addEventListener('click', () => {
+                    if (simulationStarted) return;
+                    simulationStarted = true;
+                    runBtn.disabled = true;
+                    runBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                    const stepMessages = [
+                        '⚠️ Посилання переслали в інший чат — контроль над аудиторією втрачено!',
+                        '⚠️ Файли вже завантажили на сторонні пристрої — повернути їх назад неможливо!',
+                        '⚠️ Зі сканів і фото зчитано особисті дані (адресу та номер телефону)!',
+                        '💀 Високий ризик фейкових акаунтів і кібербулінгу! Негайно закрий доступ!'
+                    ];
+
+                    for (let i = 1; i <= 4; i++) {
+                        setTimeout(() => {
+                            sfx.playWarning();
+                            const box = document.getElementById(`leak-step-${i}`);
+                            const tag = document.getElementById(`leak-tag-${i}`);
+                            if (box) box.classList.add('leak-alert');
+                            if (tag) {
+                                tag.textContent = 'ЗАГРОЗА!';
+                                tag.className = 'text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-rose-600 text-white font-bold';
+                            }
+                            logEl.innerHTML = `<span class="text-rose-300 font-semibold">${stepMessages[i - 1]}</span>`;
+
+                            if (i === 4) {
+                                lockBtn.disabled = false;
+                            }
+                        }, (i - 1) * 550);
+                    }
+                });
+
+                lockBtn.addEventListener('click', () => {
+                    if (!simulationStarted || threatNeutralized) return;
+                    threatNeutralized = true;
+                    lockBtn.disabled = true;
+                    sfx.playClick();
+
+                    for (let i = 1; i <= 4; i++) {
+                        const box = document.getElementById(`leak-step-${i}`);
+                        const tag = document.getElementById(`leak-tag-${i}`);
+                        if (box) {
+                            box.classList.remove('leak-alert');
+                            box.classList.add('border-emerald-500/50', 'bg-emerald-950/20');
+                        }
+                        if (tag) {
+                            tag.textContent = 'ЗАБЛОКОВАНО';
+                            tag.className = 'text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-emerald-600 text-white font-bold';
+                        }
+                    }
+
+                    logEl.innerHTML = `<span class="text-emerald-300">✅ <strong>Висновок засвоєно:</strong> Ніколи не відкривай доступ до цілих папок з особистими фото чи документами. Ділися лише окремим файлом і тільки з конкретними людьми!</span>`;
+                    document.getElementById('completeStage3Btn').disabled = false;
+                });
+
+                document.getElementById('completeStage3Btn').addEventListener('click', () => {
+                    if (!threatNeutralized) return;
+                    addScore(250);
+                    activatePrivacyModule(
+                        3,
+                        'Захист папок від витоку',
+                        'Ти дослідив, як відкрите посилання призводить до неконтрольованого копіювання даних, і закрив доступ до папки.'
+                    );
+                    renderStage(4);
+                });
+            }
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 4: ПАСТКА УСПАДКУВАННЯ ПАПОК ТА ЗАБОРОНА ЗАВАНТАЖЕННЯ
+            // ------------------------------------------------------------------------
+            else if (stageNum === 4) {
+                badge.textContent = 'МІСІЯ 4 / 5 • КОПІЮВАННЯ';
+                title.textContent = 'Тонкі налаштування та пастка папок';
+
+                let quizPassed = false;
+                let downloadBlocked = false;
+
+                workspace.innerHTML = `
+                    <div class="space-y-4">
+                        <!-- Блок 1: Пастка успадкування прав папки -->
+                        <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 space-y-2.5">
+                            <div class="text-xs sm:text-sm font-bold text-white">
+                                1. Уяви: ти відкрив доступ до папки <span class="font-mono-code text-sky-300">Проєкт_2026</span> для всього класу, а через тиждень завантажив у цю ж папку свій приватний файл <span class="font-mono-code text-amber-300">Мої_Паролі.txt</span>. Хто його побачить?
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <button type="button" data-ans="wrong" class="folder-trap-btn p-3 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-left transition">
+                                    Тільки я, бо я не натискав «Поділитися» саме на цьому файлі
+                                </button>
+                                <button type="button" data-ans="right" class="folder-trap-btn p-3 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-left transition">
+                                    Увесь клас! Файл автоматично успадковує права відкритої папки
+                                </button>
+                            </div>
+                            <div id="folderTrapFb" class="text-xs hidden"></div>
+                        </div>
+
+                        <!-- Блок 2: Налаштування шестерні (заборона завантаження та копіювання) -->
+                        <div class="p-4 rounded-2xl bg-slate-900/90 border border-sky-500/30 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs sm:text-sm font-bold text-sky-300">2. Додатковий захист (іконка ⚙️ у вікні «Поділитися»):</span>
+                                <span class="text-[11px] font-mono-code text-slate-400">Конфіденційний документ</span>
+                            </div>
+                            <p class="text-xs text-slate-300">
+                                Ти ділишся авторською презентацією лише для перегляду. Зніми галочку нижче, щоб читачі не могли завантажити, роздрукувати чи скопіювати твій файл:
+                            </p>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950 border border-slate-700 cursor-pointer hover:border-sky-400 transition">
+                                <input id="allowDownloadCheckbox" type="checkbox" checked class="mt-0.5 w-4 h-4 accent-sky-500">
+                                <span class="text-xs text-slate-200">
+                                    Читачі та коментатори бачать опцію <strong>завантаження, друку й копіювання</strong>
+                                </span>
+                            </label>
+                            <div id="downloadLockFb" class="text-xs text-amber-300">
+                                ⚠️ Зараз читачі можуть зберегти копію твого файлу собі на комп'ютер. Зніми галочку!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <span class="text-xs text-slate-400">Нагорода: <strong class="text-amber-400">+250 XP</strong> та модуль «Копії»</span>
+                        <button id="completeStage4Btn" disabled class="btn-success w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white text-sm">
+                            🚫 Активувати захист від копіювання
+                        </button>
+                    </div>
+                `;
+
+                const checkReady = () => {
+                    document.getElementById('completeStage4Btn').disabled = !(quizPassed && downloadBlocked);
+                };
+
+                document.querySelectorAll('.folder-trap-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const isRight = btn.getAttribute('data-ans') === 'right';
+                        const fb = document.getElementById('folderTrapFb');
+                        fb.classList.remove('hidden');
+
+                        if (isRight) {
+                            sfx.playClick();
+                            quizPassed = true;
+                            btn.classList.add('border-emerald-500', 'bg-emerald-950/30', 'text-emerald-200');
+                            fb.className = 'text-xs text-emerald-300';
+                            fb.textContent = '✅ Точно! Усі файли всередині спільної папки автоматично стають доступними тим, хто має доступ до цієї папки.';
+                        } else {
+                            sfx.playWarning();
+                            btn.classList.add('border-rose-500', 'bg-rose-950/30');
+                            fb.className = 'text-xs text-rose-300';
+                            fb.textContent = '⚠️ Помилка! У Google Диску права доступу папки автоматично поширюються на всі нові файли всередині неї.';
+                        }
+                        checkReady();
+                    });
+                });
+
+                const dlCheckbox = document.getElementById('allowDownloadCheckbox');
+                dlCheckbox.addEventListener('change', () => {
+                    const fb = document.getElementById('downloadLockFb');
+                    if (!dlCheckbox.checked) {
+                        sfx.playClick();
+                        downloadBlocked = true;
+                        fb.className = 'text-xs text-emerald-300';
+                        fb.textContent = '✅ Чудово! Кнопки «Завантажити», «Друк» і «Копіювати» заблоковано для сторонніх читачів.';
+                    } else {
+                        sfx.playWarning();
+                        downloadBlocked = false;
+                        fb.className = 'text-xs text-amber-300';
+                        fb.textContent = '⚠️ Зараз читачі можуть зберегти копію твого файлу собі на комп\'ютер. Зніми галочку!';
+                    }
+                    checkReady();
+                });
+
+                document.getElementById('completeStage4Btn').addEventListener('click', () => {
+                    if (!(quizPassed && downloadBlocked)) return;
+                    addScore(250);
+                    activatePrivacyModule(
+                        4,
+                        'Блокування копіювання та пасток папок',
+                        'Ти знаєш про успадкування прав у папках і вмієш забороняти завантаження конфіденційних файлів.'
+                    );
+                    renderStage(5);
+                });
+            }
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 5: ФІНАЛЬНИЙ АУДИТ GOOGLE ДИСКА
+            // ------------------------------------------------------------------------
+            else if (stageNum === 5) {
+                badge.textContent = 'МІСІЯ 5 / 5 • АУДИТ';
+                title.textContent = 'Аудит безпеки Google Диска';
+
+                const files = [
+                    {
+                        id: 'f1',
+                        icon: '🪪',
+                        name: 'Скан_Свідоцтва_та_Квитків.pdf',
+                        currentStatus: '🌐 Усі, хто має посилання (Читач)',
+                        isDanger: true,
+                        fixedText: '🔒 Обмежено (лише власник)'
+                    },
+                    {
+                        id: 'f2',
+                        icon: '📝',
+                        name: 'Твір_Українська_Література.docx',
+                        currentStatus: '🌐 Усі, хто має посилання (Редактор!)',
+                        isDanger: true,
+                        fixedText: '🔒 Обмежено (лише вчителька — Коментатор)'
+                    },
+                    {
+                        id: 'f3',
+                        icon: '📊',
+                        name: 'Доповідь_Космос_для_вчителя.pptx',
+                        currentStatus: '🔒 Лише olena.teacher@school.ua (Читач)',
+                        isDanger: false,
+                        fixedText: '✅ Підтверджено: налаштовано безпечно'
+                    },
+                    {
+                        id: 'f4',
+                        icon: '📁',
+                        name: 'Папка_Сімейні_Фото_Відпочинок',
+                        currentStatus: '🌐 Усі, хто має посилання (Читач)',
+                        isDanger: true,
+                        fixedText: '🔒 Обмежено (лише батьки)'
+                    }
+                ];
+
+                const resolved = { f1: false, f2: false, f3: false, f4: false };
+
+                workspace.innerHTML = `
+                    <div class="space-y-3.5">
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Фінальне завдання! Перевір 4 об'єкти на Google Диску учня. Якщо налаштування доступу небезпечне — натисни <strong class="text-rose-300">«Закрити доступ»</strong>, а якщо файл вже захищено правильно — натисни <strong class="text-emerald-300">«Безпечно»</strong>.
+                        </p>
+
+                        <div class="space-y-2.5">
+                            ${files.map(f => `
+                                <div id="audit-row-${f.id}" class="p-3 rounded-xl bg-slate-900/95 border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition">
+                                    <div>
+                                        <div class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
+                                            <span>${f.icon}</span>
+                                            <span class="font-mono-code">${f.name}</span>
+                                        </div>
+                                        <div id="audit-status-${f.id}" class="text-[11px] ${f.isDanger ? 'text-rose-300' : 'text-sky-300'} mt-0.5">
+                                            Доступ: ${f.currentStatus}
+                                        </div>
+                                    </div>
+                                    <div id="audit-actions-${f.id}" class="flex gap-2 shrink-0">
+                                        <button type="button" data-fid="${f.id}" data-act="fix"
+                                            class="audit-btn px-3 py-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-bold text-xs transition">
+                                            🔒 Закрити доступ
+                                        </button>
+                                        <button type="button" data-fid="${f.id}" data-act="ok"
+                                            class="audit-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold text-xs transition">
+                                            ✅ Безпечно
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <span class="text-xs text-slate-400">Нагорода: <strong class="text-amber-400">+300 XP</strong> та 100% захист Диска</span>
+                        <button id="completeAuditBtn" disabled class="btn-success w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white text-sm">
+                            🛡️ Завершити аудит хмари
+                        </button>
+                    </div>
+                `;
+
+                document.querySelectorAll('.audit-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const fid = btn.getAttribute('data-fid');
+                        const act = btn.getAttribute('data-act');
+                        const fileObj = files.find(item => item.id === fid);
+                        if (!fileObj || resolved[fid]) return;
+
+                        const isCorrectAction = (fileObj.isDanger && act === 'fix') || (!fileObj.isDanger && act === 'ok');
+
+                        if (isCorrectAction) {
+                            sfx.playClick();
+                            resolved[fid] = true;
+                            const row = document.getElementById(`audit-row-${fid}`);
+                            const statusEl = document.getElementById(`audit-status-${fid}`);
+                            const actionsEl = document.getElementById(`audit-actions-${fid}`);
+
+                            row.className = 'p-3 rounded-xl bg-emerald-950/25 border border-emerald-500/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition';
+                            statusEl.className = 'text-[11px] text-emerald-300 font-semibold mt-0.5';
+                            statusEl.textContent = fileObj.fixedText;
+                            actionsEl.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs">✔ Перевірено</span>`;
+
+                            if (Object.values(resolved).every(Boolean)) {
+                                document.getElementById('completeAuditBtn').disabled = false;
+                            }
+                        } else {
+                            sfx.playWarning();
+                            showToast(
+                                'Уважніше перевір доступ!',
+                                fileObj.isDanger
+                                    ? 'Цей файл відкритий для всіх в інтернеті — його потрібно закрити!'
+                                    : 'Цей файл уже доступний лише конкретній вчительці — він безпечний!',
+                                '⚠️'
+                            );
+                        }
+                    });
+                });
+
+                document.getElementById('completeAuditBtn').addEventListener('click', () => {
+                    if (!Object.values(resolved).every(Boolean)) return;
+                    addScore(300);
+                    activatePrivacyModule(
+                        5,
+                        'Повний Аудит Хмари (100%)',
+                        'Усі файли та папки на Google Диску перевірено й захищено. Жоден сторонній не має зайвого доступу!'
+                    );
+                    renderStage(6);
+                });
+            }
+
+            // ------------------------------------------------------------------------
+            // ЕТАП 6: ФІНАЛ ТА ГЕНЕРАЦІЯ ПЕРСОНАЛЬНОГО СЕРТИФІКАТА
+            // ------------------------------------------------------------------------
+            else if (stageNum === 6) {
+                badge.textContent = 'МІСІЮ ВИКОНАНО';
+                title.textContent = 'Google Диск захищено на 100%!';
+
+                workspace.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-950/60 via-sky-950/50 to-slate-900 border border-emerald-400/50 text-center">
+                            <div class="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-mono-code text-xs font-bold mb-2">
+                                100% ПРИВАТНІСТЬ ХМАРИ • ${gameState.score} XP
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-extrabold text-white">Вітаємо, Вартовий Хмари!</h3>
+                            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+                                Ти пройшов усі 5 місій і тепер точно знаєш, як захистити свої файли й папки у Google Диску.
+                            </p>
+                        </div>
+
+                        <!-- Форма введення Прізвища та імені для Сертифіката -->
+                        <div class="p-4 rounded-2xl bg-slate-900/95 border border-sky-400/45 space-y-3 shadow-lg">
+                            <div class="flex items-center gap-2 text-sky-300 font-bold text-sm">
+                                <span>🎓</span>
+                                <span>Отримання іменного Сертифіката з результатом</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Введи своє <strong class="text-white">Прізвище та ім'я</strong>, щоб сформувати персональний сертифікат про проходження тренажера з результатом <span class="font-mono-code text-amber-400 font-bold">${gameState.score} XP</span>:
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-2.5">
+                                <input id="playerFullNameInput" type="text" maxlength="55"
+                                    value="${escapeHtml(gameState.playerName)}"
+                                    placeholder="Прізвище та ім'я (напр., Мельник Софія)"
+                                    class="flex-grow px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 focus:border-emerald-400 focus:outline-none text-sm text-white">
+                                <button id="generateCertBtn" class="btn-success px-5 py-2.5 rounded-xl font-bold text-white text-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                                    <span>🏆 Отримати сертифікат</span>
+                                </button>
+                            </div>
+                            <p id="certNameError" class="text-xs text-rose-400 hidden">
+                                ⚠️ Будь ласка, вкажіть ваше Прізвище та ім'я (мінімум 3 символи).
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-900 border border-sky-500/30">
+                                <div class="font-bold text-sky-300 mb-0.5">1. Режим «Обмежено»</div>
+                                <p class="text-slate-300">Не вмикай «Усі, хто має посилання» для особистих файлів — додавай лише потрібні email-адреси.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-emerald-500/30">
+                                <div class="font-bold text-emerald-300 mb-0.5">2. Правильна роль</div>
+                                <p class="text-slate-300">Обирай «Читач» або «Коментатор», а роль «Редактор» давай лише надійним напарникам.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-amber-500/30">
+                                <div class="font-bold text-amber-300 mb-0.5">3. Пам'ятай про наслідки</div>
+                                <p class="text-slate-300">Відкрите посилання легко переслати, а завантажені копії фото залишаються в інших назавжди.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-purple-500/30">
+                                <div class="font-bold text-purple-300 mb-0.5">4. Успадкування папок</div>
+                                <p class="text-slate-300">Усі нові файли в спільній папці автоматично стають доступними її учасникам.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-wrap gap-3 justify-between items-center">
+                        <button id="openGuideBottomBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold text-xs sm:text-sm transition">
+                            ☁️ Відкрити пам'ятку
+                        </button>
+                        <button id="restartGameBtn" class="btn-primary px-6 py-2.5 rounded-xl font-bold text-white text-sm">
+                            🔄 Пройти тренажер знову
+                        </button>
+                    </div>
+                `;
+
+                const nameInput = document.getElementById('playerFullNameInput');
+                const genBtn = document.getElementById('generateCertBtn');
+                const errText = document.getElementById('certNameError');
+
+                const handleCreateCert = () => {
+                    const cleanedName = nameInput.value.trim().replace(/\s+/g, ' ');
+                    if (cleanedName.length < 3) {
+                        sfx.playWarning();
+                        errText.classList.remove('hidden');
+                        nameInput.classList.add('border-rose-500');
+                        nameInput.focus();
+                        return;
+                    }
+                    errText.classList.add('hidden');
+                    nameInput.classList.remove('border-rose-500');
+                    gameState.playerName = cleanedName;
+                    openCertificateModal(cleanedName);
+                };
+
+                genBtn.addEventListener('click', handleCreateCert);
+                nameInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') handleCreateCert();
+                });
+
+                document.getElementById('openGuideBottomBtn').addEventListener('click', () => {
+                    document.getElementById('openGuideBtn').click();
+                });
+
+                document.getElementById('restartGameBtn').addEventListener('click', resetGame);
+            }
+        }
+
+        /**
+         * ============================================================================
+         * ГЕНЕРАЦІЯ ПЕРСОНАЛЬНОГО СЕРТИФІКАТА НА CANVAS
+         * ============================================================================
+         */
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            const r = Math.min(radius, width / 2, height / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + width - r, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+            ctx.lineTo(x + width, y + height - r);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+            ctx.lineTo(x + r, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function drawCertificateOnCanvas(fullName) {
+            const canvas = document.getElementById('certificateCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+
+            // 1. Фон
+            const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+            bgGrad.addColorStop(0, '#050b1c');
+            bgGrad.addColorStop(0.5, '#0b1836');
+            bgGrad.addColorStop(1, '#061228');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, W, H);
+
+            // 2. Хмарна сітка
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.07)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= W; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, H);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= H; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(W, y);
+                ctx.stroke();
+            }
+
+            // 3. Радіальне сяйво
+            const glow = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, 540);
+            glow.addColorStop(0, 'rgba(16, 185, 129, 0.14)');
+            glow.addColorStop(0.6, 'rgba(59, 130, 246, 0.08)');
+            glow.addColorStop(1, 'transparent');
+            ctx.fillStyle = glow;
+            ctx.fillRect(0, 0, W, H);
+
+            // 4. Подвійна рамка
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(32, 32, W - 64, H - 64);
+
+            ctx.strokeStyle = 'rgba(52, 211, 153, 0.45)';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(46, 46, W - 92, H - 92);
+
+            // Кутові акценти
+            const cornerLen = 36;
+            ctx.strokeStyle = '#34d399';
+            ctx.lineWidth = 6;
+            [
+                [32, 32, 1, 1],
+                [W - 32, 32, -1, 1],
+                [32, H - 32, 1, -1],
+                [W - 32, H - 32, -1, -1]
+            ].forEach(([cx, cy, dx, dy]) => {
+                ctx.beginPath();
+                ctx.moveTo(cx + dx * cornerLen, cy);
+                ctx.lineTo(cx, cy);
+                ctx.lineTo(cx, cy + dy * cornerLen);
+                ctx.stroke();
+            });
+
+            // 5. Емблема хмарного щита
+            ctx.save();
+            ctx.translate(W / 2, 125);
+            const shieldGrad = ctx.createLinearGradient(-38, -45, 38, 45);
+            shieldGrad.addColorStop(0, '#3b82f6');
+            shieldGrad.addColorStop(0.5, '#06b6d4');
+            shieldGrad.addColorStop(1, '#10b981');
+            ctx.fillStyle = shieldGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, -46);
+            ctx.lineTo(40, -30);
+            ctx.lineTo(36, 10);
+            ctx.quadraticCurveTo(28, 36, 0, 48);
+            ctx.quadraticCurveTo(-28, 36, -36, 10);
+            ctx.lineTo(-40, -30);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#050b1c';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-14, 2);
+            ctx.lineTo(-3, 14);
+            ctx.lineTo(17, -10);
+            ctx.stroke();
+            ctx.restore();
+
+            // 6. Заголовки
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 18px Inter, sans-serif';
+            ctx.fillText('АКАДЕМІЯ ЦИФРОВОЇ БЕЗПЕКИ • «БЕЗПЕКА GOOGLE ДИСКА»', W / 2, 210);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 58px Inter, sans-serif';
+            ctx.fillText('СЕРТИФІКАТ', W / 2, 280);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '500 22px Inter, sans-serif';
+            ctx.fillText('Цим документом підтверджується, що', W / 2, 338);
+
+            // 7. Прізвище та ім'я гравця
+            ctx.fillStyle = '#34d399';
+            ctx.font = '800 44px Inter, sans-serif';
+            ctx.fillText(fullName, W / 2, 405);
+
+            const nameWidth = Math.min(Math.max(ctx.measureText(fullName).width + 80, 420), 920);
+            const lineGrad = ctx.createLinearGradient(W / 2 - nameWidth / 2, 0, W / 2 + nameWidth / 2, 0);
+            lineGrad.addColorStop(0, 'transparent');
+            lineGrad.addColorStop(0.2, '#3b82f6');
+            lineGrad.addColorStop(0.8, '#10b981');
+            lineGrad.addColorStop(1, 'transparent');
+            ctx.strokeStyle = lineGrad;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(W / 2 - nameWidth / 2, 424);
+            ctx.lineTo(W / 2 + nameWidth / 2, 424);
+            ctx.stroke();
+
+            // 8. Опис досягнення
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '400 21px Inter, sans-serif';
+            ctx.fillText('успішно виконав(ла) усі 5 практичних місій тренажера з безпеки Google Диска,', W / 2, 476);
+            ctx.fillText('опанував(ла) налаштування приватності файлів і папок та знає, як запобігти', W / 2, 508);
+            ctx.fillText('неконтрольованому поширенню особистої інформації в інтернеті.', W / 2, 540);
+
+            // 9. Картки результатів
+            const stats = [
+                { label: 'ПРИВАТНІСТЬ ДИСКА', value: '100% (5 / 5)', color: '#38bdf8' },
+                { label: 'НАБРАНИЙ РЕЗУЛЬТАТ', value: `${gameState.score} XP`, color: '#fbbf24' },
+                { label: 'СТАТУС', value: 'Вартовий Хмари', color: '#34d399' }
+            ];
+
+            const boxW = 310;
+            const boxH = 92;
+            const gap = 28;
+            const startX = (W - (boxW * 3 + gap * 2)) / 2;
+            const boxY = 582;
+
+            stats.forEach((st, i) => {
+                const bx = startX + i * (boxW + gap);
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+                ctx.lineWidth = 1.5;
+
+                drawRoundedRect(ctx, bx, boxY, boxW, boxH, 14);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = 'bold 14px Inter, sans-serif';
+                ctx.fillText(st.label, bx + boxW / 2, boxY + 33);
+
+                ctx.fillStyle = st.color;
+                ctx.font = '800 22px Inter, sans-serif';
+                ctx.fillText(st.value, bx + boxW / 2, boxY + 68);
+            });
+
+            // 10. Дата та код перевірки
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('uk-UA', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '500 17px Inter, sans-serif';
+            ctx.fillText(`Дата видачі: ${dateStr}`, 85, 748);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '400 14px Inter, sans-serif';
+            ctx.fillText('Модулі: Обмежений доступ • Ролі • Папки • Заборона копій • Аудит', 85, 774);
+
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#34d399';
+            ctx.font = 'bold 17px Inter, sans-serif';
+            ctx.fillText('✔ ПІДТВЕРДЖЕНО СИСТЕМОЮ ХМАРНОГО ЗАХИСТУ', W - 85, 748);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '400 14px Inter, sans-serif';
+            ctx.fillText(`ID сертифіката: GD-${now.getFullYear()}-${gameState.score}`, W - 85, 774);
+        }
+
+        function openCertificateModal(fullName) {
+            drawCertificateOnCanvas(fullName);
+            sfx.playVictory();
+            const certModal = document.getElementById('certificateModal');
+            certModal.classList.remove('hidden');
+            certModal.classList.add('flex');
+        }
+
+        function resetGame() {
+            gameState.score = 0;
+            gameState.unlocked = [false, false, false, false, false];
+            document.getElementById('scoreDisplay').textContent = '0 XP';
+
+            for (let i = 1; i <= 5; i++) {
+                const ring = document.getElementById(`ring-${i}`);
+                if (ring) ring.classList.remove('active');
+
+                const modCard = document.getElementById(`mod-${i}`);
+                if (modCard) {
+                    modCard.className = 'p-2 rounded-xl bg-slate-900/90 border border-slate-700 text-center transition';
+                    const label = modCard.querySelector('div:last-child');
+                    if (label) label.className = 'text-[10px] font-semibold text-slate-400 leading-tight mt-0.5';
+                }
+            }
+
+            document.getElementById('privacyProgressBar').style.width = '0%';
+            const pctText = document.getElementById('privacyPercentText');
+            pctText.textContent = '0% Приватності';
+            pctText.className = 'font-mono-code text-sm font-bold text-rose-400';
+
+            const statusCard = document.getElementById('vaultStatusCard');
+            if (statusCard) {
+                statusCard.className = 'w-full mt-4 p-3.5 rounded-xl bg-slate-900/90 border border-rose-500/30 text-xs text-slate-300 leading-relaxed';
+                statusCard.innerHTML = `
+                    <strong class="text-rose-400 block mb-1">⚠️ Увага: Твій Диск зараз відкритий!</strong>
+                    Коли файли мають доступ <em>«Усі, хто має посилання»</em>, будь-хто в інтернеті може переглядати, завантажувати та пересилати твої особисті дані. Пройди 5 місій, щоб налаштувати надійний захист!
+                `;
+            }
+
+            renderStage(0);
+        }
+
+        /**
+         * ============================================================================
+         * ІНІЦІАЛІЗАЦІЯ ПОДІЙ СТОРІНКИ
+         * ============================================================================
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Модальне вікно «Пам'ятка Диска»
+            const guideModal = document.getElementById('guideModal');
+            document.getElementById('openGuideBtn').addEventListener('click', () => {
+                guideModal.classList.remove('hidden');
+                guideModal.classList.add('flex');
+            });
+            const closeGuide = () => {
+                guideModal.classList.add('hidden');
+                guideModal.classList.remove('flex');
+            };
+            document.getElementById('closeGuideBtn').addEventListener('click', closeGuide);
+            document.getElementById('closeGuideBottomBtn').addEventListener('click', closeGuide);
+            guideModal.addEventListener('click', (e) => {
+                if (e.target === guideModal) closeGuide();
+            });
+
+            // Модальне вікно Сертифіката
+            const certModal = document.getElementById('certificateModal');
+            const closeCert = () => {
+                certModal.classList.add('hidden');
+                certModal.classList.remove('flex');
+            };
+            document.getElementById('closeCertModalBtn').addEventListener('click', closeCert);
+            document.getElementById('closeCertBottomBtn').addEventListener('click', closeCert);
+            certModal.addEventListener('click', (e) => {
+                if (e.target === certModal) closeCert();
+            });
+
+            document.getElementById('downloadCertBtn').addEventListener('click', () => {
+                const canvas = document.getElementById('certificateCanvas');
+                if (!canvas) return;
+                const link = document.createElement('a');
+                const safeName = (gameState.playerName || 'Vartovyi_Khmary').replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9_-]/g, '_');
+                link.download = `Sertyfikat_Google_Drive_${safeName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                sfx.playClick();
+                showToast('Сертифікат завантажено', 'Файл збережено у форматі PNG на ваш пристрій.', '🏅');
+            });
+
+            // Перемикач звуку
+            document.getElementById('toggleSoundBtn').addEventListener('click', () => {
+                sfx.enabled = !sfx.enabled;
+                document.getElementById('soundOnIcon').classList.toggle('hidden', !sfx.enabled);
+                document.getElementById('soundOffIcon').classList.toggle('hidden', sfx.enabled);
+                if (sfx.enabled) sfx.playClick();
+            });
+
+            // Запуск вступного екрана
+            renderStage(0);
+        });
+    </script>
+</body>
+</html>
